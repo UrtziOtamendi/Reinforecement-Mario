@@ -4,8 +4,8 @@ import gym
 class Environment:
 
     def __init__(self):
-        self.env=gym.make('SuperMarioBros-1-1-v0')
-
+        self.env=gym.make('SuperMarioBros-1-1-Tiles-v0')
+        ##self.env.no_render = False
     def reset(self):
         observation =self.env.reset()
         return observation

@@ -27,3 +27,4 @@ class Policy:
     def random(self):
         return np.random.randint(2,size=self.actions)
 
+    
