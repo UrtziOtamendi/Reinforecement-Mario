@@ -10,6 +10,9 @@ class Environment:
         observation =self.env.reset()
         return observation
 
+    def close(self):
+        self.env.close()
+
     def step(self,action):
         observation, reward, done, info = self.env.step(action)
         return observation, reward, done, info
