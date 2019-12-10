@@ -22,8 +22,9 @@ class Game:
             return True
 
     def __str__(self):
+        header="--- GAME RESUME --- \n"
         lifes="- Lifes : "+ str(self.lifes) +"    \n"
         total_reward="- Total Reward : "+ str(self.total_reward) +"    \n"
         scores="- Scores : "+str(self.scores)[1:-1]+" \n"
         locked_levels="- Locked levels : "+str(self.locked_levels)[1:-1]+"\n"
-        return lifes+total_reward+scores+locked_levels  
+        return header+lifes+total_reward+scores+locked_levels  
