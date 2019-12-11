@@ -3,6 +3,8 @@ from policy import Policy
 from game import Game
 from life import Life
 from stateController import StateController
+from stateBuffer import StateBuffer
+
 ## Init environment
 environment = Environment()
 
@@ -15,6 +17,11 @@ gameController= Game()
 ##Init state controller
 state_frames=4
 stateController= StateController(state_frames)
+
+##Init State buffer
+buffer_size=10000
+stateBuffer= StateBuffer(buffer_size)
+
 
 ## Is dead?
 is_dead = gameController.is_dead()
@@ -38,10 +45,11 @@ while not is_dead:
         observation, reward, is_done, info = environment.step(action)  # feedback from environment
 
         #update state
-        stateController.change_state(observation,action,reward,is_done)
+        last_state=stateController.change_state(observation,action,reward,is_done)
         
+        #Save state
+        stateBuffer.append(last_state)
         
-
         # Update life
         life.update(info)
     
