@@ -9,7 +9,9 @@ from stateBuffer import StateBuffer
 environment = Environment()
 
 ## Init policy 
-policy = Policy()
+max_epsilon_it=1000000
+epsilon_reduction=9e-7
+policy = Policy(max_epsilon_it,epsilon_reduction)
 
 ## Init Game controller
 gameController= Game()
@@ -39,7 +41,7 @@ while not is_dead:
 
     while not is_done:
         # Use policy
-        action = policy.random()  # choose random action
+        action = policy.action()  # choose random action
         
         # Make an action
         observation, reward, is_done, info = environment.step(action)  # feedback from environment
