@@ -1,11 +1,13 @@
 import random
-
+from datetime import datetime
+import json
 class StateBuffer:
 
-    def __init__(self,size):
+    def __init__(self,size,path):
         self.data = [None] * (size + 1)
         self.start = 0
         self.end = 0
+        self.path=path
     
     def append(self,state):
         if state.is_valid:
@@ -26,6 +28,16 @@ class StateBuffer:
             for i in index:
                 batch.append(self.data[i])
     
+    def saveBuffer(self):
+        filename=self.path+datetime.now().strftime("%Y%m%d-%H%M%S")+".json"
+        data={}
+        data['states']=[]
+        for state in self.data:
+            data['states'].append(state.toJSON())
+        with open(filename,'w') as outfile:
+            json.dump(data,outfile)
+
+
     def __getitem__(self, idx):
         return self.data[(self.start + idx) % len(self.data)]
     
