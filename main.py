@@ -45,16 +45,17 @@ while not is_dead:
         
         # Make an action
         observation, reward, is_done, info = environment.step(action)  # feedback from environment
-
-        #update state
-        last_state=stateController.change_state(observation,action,reward,is_done)
-        
-        #Save state
-        stateBuffer.append(last_state)
         
         # Update life
         life.update(info)
     
+        #update state
+        last_state=stateController.change_state(observation,action,reward,is_done,life.player_status)
+        
+        #Save state
+        stateBuffer.append(last_state)
+        
+        
     
     # Prin life resume
     print(life)
