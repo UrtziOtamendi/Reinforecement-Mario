@@ -12,6 +12,9 @@ class StateBuffer:
             self.data[self.end]=state
             self.end=(self.end+1) % len(self.data)
             if self.end == self.start:
+                ##Save states
+                
+
                 self.start = (self.start + 1) % len(self.data)
 
     def batch(self,size):
