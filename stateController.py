@@ -21,6 +21,7 @@ class StateController:
         #  [SO2,SO1] -> LS.action -> [NO1,NO2]
         new_state=State(self.last_state.next,reward,action,is_done,observation)
         self.states_buffer[len(self.states_buffer)-1]=new_state
+        return self.last_state
         
     def current_state(self):
         return self.states_buffer[len(self.states_buffer)-1]
