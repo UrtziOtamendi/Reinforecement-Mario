@@ -35,8 +35,6 @@ class StateController:
 
 class State:
 
-    
-
     def __init__(self,start,reward,action,is_done,observation):
         # If start is None that means there have not passed yet enough states 
         # to have recorded the needed amount of frames on start observations
@@ -53,19 +51,19 @@ class State:
     def add_observation(self,observation):
         self.next.append(observation)
         
-    def toJSON(self):
-        data={
-            'start' : self.start,
-            'reward': self.reward,
-            'action': self.action,
-            'is_done': self.is_done,
-            'next': self.next,
-            'is_valid': self.is_valid
-        }
-        
-        return data
+    def toCSV(self):
+        csv_array=[]
+        csv_array.append([aux.tolist() for aux in self.start])
+        csv_array.append(self.reward)
+        csv_array.append(self.action)
+        csv_array.append(self.is_done)
+        csv_array.append([aux.tolist() for aux in self.next])
+        csv_array.append(self.is_valid)
 
-    def __str__(self):
+        
+        return csv_array
+
+    def print(self):
         header="--- State RESUME --- \n"
         start="- Start : "+ str(self.start) +"    \n"
         reward="- Reward : "+ str(self.reward) +"    \n"
@@ -76,6 +74,16 @@ class State:
         return header+start+reward+action+is_done+next_str+is_valid  
 
 
+    def __str__(self):
+        
+        text=""
+        text=text+str([aux.tolist() for aux in self.start])
+        text=text+str(self.reward)
+        text=text+str(self.action)
+        text=text+str(self.is_done)
+        text=text+str([aux.tolist() for aux in self.next])
+        text=text+str(self.is_valid)
+        return text 
 
 
 

@@ -39,6 +39,8 @@ class Policy:
 
     def action(self):
         self.iteration+=1
+        if(self.iteration % 100 == 0):
+            print("----> Iteration nº {}".format(self.iteration))
         epsilon=self.epsilon()
         if random.uniform(0,1)<epsilon:
             return self.random()
