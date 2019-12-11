@@ -22,7 +22,7 @@ class StateController:
         new_state=State(self.last_state.next,reward,action,is_done,observation)
         self.states_buffer[len(self.states_buffer)-1]=new_state
         return self.last_state
-        
+
     def current_state(self):
         return self.states_buffer[len(self.states_buffer)-1]
 
@@ -53,6 +53,17 @@ class State:
     def add_observation(self,observation):
         self.next.append(observation)
         
+    def toJSON(self):
+        data={
+            'start' : self.start,
+            'reward': self.reward,
+            'action': self.action,
+            'is_done': self.is_done,
+            'next': self.next,
+            'is_valid': self.is_valid
+        }
+        
+        return data
 
     def __str__(self):
         header="--- State RESUME --- \n"
