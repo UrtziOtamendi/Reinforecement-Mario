@@ -2,6 +2,7 @@ from environment import Environment
 from policy import Policy
 from game import Game
 from life import Life
+from stateController import StateController
 ## Init environment
 environment = Environment()
 
@@ -9,11 +10,14 @@ environment = Environment()
 policy = Policy()
 
 ## Init Game controller
-game_controller= Game()
+gameController= Game()
 
+##Init state controller
+state_frames=4
+stateController= StateController(state_frames)
 
 ## Is dead?
-is_dead = game_controller.is_dead()
+is_dead = gameController.is_dead()
 
 
 ## Main loop
@@ -33,6 +37,11 @@ while not is_dead:
         # Make an action
         observation, reward, is_done, info = environment.step(action)  # feedback from environment
 
+        #update state
+        stateController.change_state(observation,action,reward,is_done)
+        
+        
+
         # Update life
         life.update(info)
     
@@ -40,8 +49,8 @@ while not is_dead:
     # Prin life resume
     print(life)
     #Update game controller
-    game_controller.update(info,is_done)
-    is_dead = game_controller.is_dead()
+    gameController.update(info,is_done)
+    is_dead = gameController.is_dead()
 
-print(game_controller)
+print(gameController)
 environment.close()
