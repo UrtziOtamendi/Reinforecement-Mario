@@ -5,7 +5,7 @@ class Life:
         self.player_status=0
         
     def update(self,info):
-        self.player_status=info["player_status"]
+        self.player_status=info["status"]
         self.score=info["score"]
 
     def __str__(self):

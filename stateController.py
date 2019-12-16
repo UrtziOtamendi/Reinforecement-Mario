@@ -10,6 +10,8 @@ class StateController:
         
         self.last_state=self.states_buffer[0]
 
+       
+
         for i in range(1,len(self.states_buffer)):
             #Update states next observations and move forward
             self.states_buffer[i].add_observation(observation)
@@ -32,6 +34,8 @@ class StateController:
             print(state)
 
         return string
+
+    
 
 class State:
 

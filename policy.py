@@ -1,28 +1,12 @@
 import numpy as np
 import random 
+
+
 class Policy:
 
-    '''''
-        Actions
-        
-        Six possible actions:
-                        
-            - Up
-            - Left
-            - Down
-            - Right
-            - A
-            - B
-    
-        Example:
 
-            [0,0,0,0,0,0] -> Not moving
-            [0,0,0,1,0,0] -> Moving right
-            [0,0,0,1,0,1] -> Moving right + B
-    '''''
-
-    def __init__(self,max,reduction):
-        self.actions=6
+    def __init__(self,max,reduction,action_space):
+        self.action_space=action_space
         self.iteration=0
         self.max_iteration=max
         self.reduction=reduction
@@ -35,7 +19,7 @@ class Policy:
 
 
     def random(self):
-        return np.random.randint(2,size=self.actions)
+        return self.action_space.sample()
 
     def action(self):
         self.iteration+=1
@@ -43,4 +27,4 @@ class Policy:
         if random.uniform(0,1)<epsilon:
             return self.random()
         else:
-            return self.random()
+            return None

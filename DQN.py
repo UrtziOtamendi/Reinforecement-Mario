@@ -32,7 +32,8 @@ class DQNAgent:
         self.q_true = tf.placeholder(dtype=tf.float32, shape=[None], name='labels')
         self.a_true = tf.placeholder(dtype=tf.int32, shape=[None], name='actions')
         self.reward = tf.placeholder(dtype=tf.float32, shape=[], name='reward')
-        self.input_float = tf.to_float(self.input) * (255/3)
+        
+        self.input_float = tf.to_float(self.input) /255.
         # Online network
         with tf.variable_scope('online'):
             self.conv_1 = tf.layers.conv2d(inputs=self.input_float, filters=32, kernel_size=8, strides=4, activation=tf.nn.relu)
@@ -59,6 +60,7 @@ class DQNAgent:
             tf.summary.scalar('reward', self.reward),
             tf.summary.scalar('loss', self.loss),
             tf.summary.scalar('max_q', tf.reduce_max(self.output))
+           
         ])
         self.writer = tf.summary.FileWriter(logdir='./logs', graph=self.session.graph)
 
@@ -82,7 +84,7 @@ class DQNAgent:
         """ Perform action """
         
         # Policy action
-        q = self.predict('online', np.expand_dims(state, 0))
+        q = self.predict('online', np.expand_dims(state.start, 0))
         action = np.argmax(q)
         # Decrease eps
         self.eps *= self.eps_decay
@@ -109,6 +111,7 @@ class DQNAgent:
         
         [state,next_state,action,reward,done]= batch
         # Get next q values from target network
+        print(next_state)
         next_q = self.predict('target', next_state)
         # Calculate discounted future reward
         if self.double_q:
@@ -127,3 +130,5 @@ class DQNAgent:
         self.learn_step = 0
         # Write
         self.writer.add_summary(summary, self.step)
+
+  
