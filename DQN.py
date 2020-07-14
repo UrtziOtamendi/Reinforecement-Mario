@@ -6,11 +6,12 @@ from matplotlib import pyplot as plt
 
 class DQNAgent:
     """ DQN agent """
-    def __init__(self, states, actions, batch_size, double_q):
+    def __init__(self, models_path,states, actions, batch_size, double_q):
         tf.compat.v1.disable_eager_execution()
         self.states = states
         self.actions = actions
         self.session = tf.Session()
+        self.models_path=models_path
         self.build_model()
         self.saver = tf.train.Saver(max_to_keep=10)
         self.session.run(tf.global_variables_initializer())
@@ -26,6 +27,8 @@ class DQNAgent:
         self.learn_step = 0
         self.save_each = 500000
         self.double_q = double_q
+
+        self.load_model()
 
     def build_model(self):
         """ Model builder function """
@@ -68,8 +71,16 @@ class DQNAgent:
 
     def save_model(self):
         """ Saves current model to disk """
-        self.saver.save(sess=self.session, save_path='./models/model', global_step=self.step)
-
+        print('--------->Saving model to disk')
+        self.saver.save(sess=self.session, save_path=self.models_path+"model", global_step=self.step)
+    def load_model(self):
+        """ Loads model from disk """
+        print('--------->Loading model from disk')
+        save_path=tf.train.latest_checkpoint(self.models_path)
+        if save_path is not None:
+            self.saver.restore(sess=self.session, save_path=tf.train.latest_checkpoint(self.models_path))
+        
+    
     
     def predict(self, model, state):
         """ Prediction """
@@ -92,6 +103,7 @@ class DQNAgent:
         return action
 
     def learn(self,batch):
+        self.step+=1
         """ Gradient descent """
         # Sync target network
         if self.step % self.copy == 0:
@@ -125,6 +137,7 @@ class DQNAgent:
                                                  self.reward: np.mean(reward)})
         # Reset learn step
         self.learn_step = 0
+        
         # Write
         self.writer.add_summary(summary, self.step)
 

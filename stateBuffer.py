@@ -49,7 +49,8 @@ class StateBuffer:
         print("-----> Saving Buffer")
         data_array=[]
         for state in self.data:
-            data_array.append(state.toCSV())
+            if state is not None:
+                data_array.append(state.toCSV())
         pickle.dump(data_array, open( self.path+datetime.now().strftime("%Y%m%d-%H%M%S")+".p"
         , "wb" ) )
         
