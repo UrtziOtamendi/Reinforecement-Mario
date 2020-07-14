@@ -1,5 +1,5 @@
 import random
-
+import numpy as np
 class StateBuffer:
 
     def __init__(self,size):
@@ -34,7 +34,7 @@ class StateBuffer:
                 action.append(self.data[i].action)
                 reward.append(self.data[i].reward)
                 done.append(self.data[i].is_done)
-            batch=[state,next_state,action,reward,done]
+            batch=[state,next_state,action,np.array(reward),np.array(done)]
             return batch
     
     def __getitem__(self, idx):

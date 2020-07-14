@@ -7,9 +7,18 @@ from stateBuffer import StateBuffer
 from DQN import DQNAgent
 from logger import Logger
 import time
+import random
 BATCH_SIZE = 32
 
+import tensorflow as tf
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+tf.get_logger().setLevel('ERROR')
 
+from tensorflow.python.client import device_lib 
+print(device_lib.list_local_devices())
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
 ## Init environment
 environment = Environment()
@@ -33,8 +42,9 @@ stateBuffer= StateBuffer(buffer_size)
 
 ##Init DQN model
 actions=policy.action_space.n
-states=(84,84,state_frames)
-DQNmodel= DQNAgent(states,actions, double_q=True)
+states=( state_frames,84,84)
+DQNmodel= DQNAgent(states,actions,BATCH_SIZE, double_q=True)
+training_prob=0.05
 
 #Init logger
 logger=Logger("./logs")
@@ -64,15 +74,19 @@ while not is_dead:
             #Check if current state is valid
             current_state=stateController.current_state()
             if current_state.is_valid:
+                print('Run')
                 # In case current state is valid select action using DQN model
                 action=DQNmodel.run(state=current_state)
             else:
+                print('Random')
                 # In case current state is not valid select random action
                 action= policy.random()
 
         # Make an action
         observation, reward, is_done, info = environment.step(action)  # feedback from environment
         
+        #Render step
+        environment.render()
         # Update life
         life.update(info)
 
@@ -83,10 +97,12 @@ while not is_dead:
         stateBuffer.append(last_state)
 
         #Learn Model
-        training_batch=stateBuffer.batch(BATCH_SIZE)
-        if training_batch!=[]:
-            DQNmodel.learn(training_batch)
-        
+        if random.uniform(0,1)<training_prob:
+            training_batch=stateBuffer.batch(BATCH_SIZE)
+            if training_batch!=[]:
+                print('Train')
+                DQNmodel.learn(training_batch)
+            
         if policy.iteration % 100 ==0:
             print(policy.iteration)
             print(time.time() - start)

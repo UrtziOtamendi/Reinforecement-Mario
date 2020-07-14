@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 class Logger:
 
@@ -13,4 +13,4 @@ class Logger:
 
     def record(self,score):
         self.step+=1
-        self.writer.add_summary([score],self.step)
+        self.writer.add_summary({'score':score},self.step)

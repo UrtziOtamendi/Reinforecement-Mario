@@ -1,12 +1,13 @@
 import time
 import random
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from matplotlib import pyplot as plt
 
 class DQNAgent:
     """ DQN agent """
-    def __init__(self, states, actions, double_q):
+    def __init__(self, states, actions, batch_size, double_q):
+        tf.compat.v1.disable_eager_execution()
         self.states = states
         self.actions = actions
         self.session = tf.Session()
@@ -18,7 +19,7 @@ class DQNAgent:
         self.eps_decay = 0.99999975
         self.eps_min = 0.1
         self.gamma = 0.90
-        self.batch_size = 32
+        self.batch_size = batch_size
         self.copy = 10000
         self.step = 0
         self.learn_each = 3
@@ -32,11 +33,10 @@ class DQNAgent:
         self.q_true = tf.placeholder(dtype=tf.float32, shape=[None], name='labels')
         self.a_true = tf.placeholder(dtype=tf.int32, shape=[None], name='actions')
         self.reward = tf.placeholder(dtype=tf.float32, shape=[], name='reward')
-        
-        self.input_float = tf.to_float(self.input) /255.
+        self.input_float = tf.to_float(self.input) / 255.
         # Online network
         with tf.variable_scope('online'):
-            self.conv_1 = tf.layers.conv2d(inputs=self.input_float, filters=32, kernel_size=8, strides=4, activation=tf.nn.relu)
+            self.conv_1 = tf.layers.conv2d(inputs=self.input_float, data_format='channels_first',filters=32, kernel_size=8, strides=4, activation=tf.nn.relu)
             self.conv_2 = tf.layers.conv2d(inputs=self.conv_1, filters=64, kernel_size=4, strides=2, activation=tf.nn.relu)
             self.conv_3 = tf.layers.conv2d(inputs=self.conv_2, filters=64, kernel_size=3, strides=1, activation=tf.nn.relu)
             self.flatten = tf.layers.flatten(inputs=self.conv_3)
@@ -44,7 +44,7 @@ class DQNAgent:
             self.output = tf.layers.dense(inputs=self.dense, units=self.actions, name='output')
         # Target network
         with tf.variable_scope('target'):
-            self.conv_1_target = tf.layers.conv2d(inputs=self.input_float, filters=32, kernel_size=8, strides=4, activation=tf.nn.relu)
+            self.conv_1_target = tf.layers.conv2d(inputs=self.input_float, data_format='channels_first', filters=32, kernel_size=8, strides=4, activation=tf.nn.relu)
             self.conv_2_target = tf.layers.conv2d(inputs=self.conv_1_target, filters=64, kernel_size=4, strides=2, activation=tf.nn.relu)
             self.conv_3_target = tf.layers.conv2d(inputs=self.conv_2_target, filters=64, kernel_size=3, strides=1, activation=tf.nn.relu)
             self.flatten_target = tf.layers.flatten(inputs=self.conv_3_target)
@@ -60,10 +60,8 @@ class DQNAgent:
             tf.summary.scalar('reward', self.reward),
             tf.summary.scalar('loss', self.loss),
             tf.summary.scalar('max_q', tf.reduce_max(self.output))
-           
         ])
         self.writer = tf.summary.FileWriter(logdir='./logs', graph=self.session.graph)
-
     def copy_model(self):
         """ Copy weights to target network """
         self.session.run([tf.assign(new, old) for (new, old) in zip(tf.trainable_variables('target'), tf.trainable_variables('online'))])
@@ -111,7 +109,6 @@ class DQNAgent:
         
         [state,next_state,action,reward,done]= batch
         # Get next q values from target network
-        print(next_state)
         next_q = self.predict('target', next_state)
         # Calculate discounted future reward
         if self.double_q:
