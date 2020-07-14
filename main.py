@@ -38,7 +38,8 @@ stateController= StateController(state_frames)
 
 ##Init State buffer
 buffer_size=10000
-stateBuffer= StateBuffer(buffer_size)
+dataset_directory="states_dataset/"
+stateBuffer= StateBuffer(buffer_size,dataset_directory)
 
 ##Init DQN model
 actions=policy.action_space.n

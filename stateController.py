@@ -24,7 +24,7 @@ class StateController:
         new_state=State(self.last_state.next,reward,action,is_done,observation,player_status)
         self.states_buffer[len(self.states_buffer)-1]=new_state
         return self.last_state
-        
+
     def current_state(self):
         return self.states_buffer[len(self.states_buffer)-1]
 
@@ -58,8 +58,19 @@ class State:
     def add_observation(self,observation):
         self.next.append(observation)
         
+    def toCSV(self):
+        csv_array=[]
+        csv_array.append([aux.tolist() for aux in self.start])
+        csv_array.append(self.reward)
+        csv_array.append(self.action)
+        csv_array.append(self.is_done)
+        csv_array.append([aux.tolist() for aux in self.next])
+        csv_array.append(self.is_valid)
 
-    def __str__(self):
+        
+        return csv_array
+
+    def print(self):
         header="--- State RESUME --- \n"
         start="- Start : "+ str(self.start) +"    \n"
         reward="- Reward : "+ str(self.reward) +"    \n"
@@ -71,6 +82,16 @@ class State:
         return header+start+reward+action+is_done+player_status+next_str+is_valid  
 
 
+    def __str__(self):
+        
+        text=""
+        text=text+str([aux.tolist() for aux in self.start])
+        text=text+str(self.reward)
+        text=text+str(self.action)
+        text=text+str(self.is_done)
+        text=text+str([aux.tolist() for aux in self.next])
+        text=text+str(self.is_valid)
+        return text 
 
 
 
